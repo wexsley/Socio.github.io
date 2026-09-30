@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-PT" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treino de Sociologia - Quiz Interativo</title>
+    <style>
+        /* Variáveis de Tema (Tons Amarelados / Âmbar) */
+        :root[data-theme="light"] {
+            --bg: #fdfbf7;
+            --card-bg: #ffffff;
+            --card-border: #f3eedd;
+            --text: #292524;
+            --text-muted: #78716c;
+            
+            --primary: #d97706; /* Âmbar vibrante */
+            --primary-hover: #b45309;
+            --primary-light: #fef3c7;
+            --primary-text: #ffffff;
+
+            --option-bg: #fffbeb;
+            --option-border: #fde68a;
+            --option-hover: #fef08a;
+
+            --correct-bg: #ecfdf5;
+            --correct-border: #10b981;
+            --correct-text: #065f46;
+
+            --wrong-bg: #fef2f2;
+            --wrong-border: #ef4444;
+            --wrong-text: #991b1b;
+
+            --macete-bg: #fffbeb;
+            --macete-border: #f59e0b;
+            --explanation-bg: #fefce8;
+            --explanation-border: #eab308;
+
+            --shadow: 0 10px 15px -3px rgba(180, 83, 9, 0.05), 0 4px 6px -4px rgba(180, 83, 9, 0.05);
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #14120e;
+            --card-bg: #1f1b16;
+            --card-border: #332a20;
+            --text: #f5f5f4;
+            --text-muted: #a8a29e;
+
+            --primary: #f59e0b;
+            --primary-hover: #fbbf24;
+            --primary-light: #332308;
+            --primary-text: #1c1917;
+
+            --option-bg: #262018;
+            --option-border: #443728;
+            --option-hover: #3d301d;
+
+            --correct-bg: #064e3b;
+            --correct-border: #10b981;
+            --correct-text: #a7f3d0;
+
+            --wrong-bg: #7f1d1d;
+            --wrong-border: #ef4444;
+            --wrong-text: #fecaca;
+
+            --macete-bg: #2d210b;
+            --macete-border: #f59e0b;
+            --explanation-bg: #26220d;
+            --explanation-border: #ca8a04;
+
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .theme-toggle-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--option-border);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle-btn:hover {
+            opacity: 0.9;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--option-bg);
+            border: 1px solid var(--option-border);
+            border-radius: 20px;
+            margin-top: 18px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), #eab308);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            border-radius: 8px;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--option-bg);
+            border: 1.5px solid var(--option-border);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: var(--option-hover);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+            color: var(--correct-text) !important;
+            font-weight: 700;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--wrong-bg) !important;
+            border-color: var(--wrong-border) !important;
+            color: var(--wrong-text) !important;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .feedback.show {
+            display: flex;
+        }
+
+        .feedback-explanation {
+            background-color: var(--explanation-bg);
+            border-left: 4px solid var(--explanation-border);
+            color: var(--text);
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .feedback-macete {
+            background-color: var(--macete-bg);
+            border-left: 4px solid var(--macete-border);
+            color: var(--text);
+            padding: 12px 14px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        #results-card {
+            display: none;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 40px 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 15px 0;
+        }
+
+        .restart-btn {
+            background-color: var(--primary);
+            color: var(--primary-text);
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .restart-btn:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-top">
+            <h1>🎓 Simulado de Sociologia</h1>
+            <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()">
+                🌙 Modo Escuro
+            </button>
+        </div>
+        <p class="subtitle">Prática intensiva com gabarito comentado e macetes de memorização</p>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </header>
+
+    <div id="quiz-container"></div>
+
+    <div id="results-card">
+        <h2>🎉 Simulado Concluído!</h2>
+        <p style="color: var(--text-muted); margin-top: 8px;">O teu resultado final foi:</p>
+        <div class="score" id="score-display">0 / 20</div>
+        <p id="score-message" style="margin-bottom: 20px; font-weight: 600;"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Reiniciar Quiz</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    {
+        title: "1. Karl Marx — trabalho e capitalismo",
+        text: "Para Karl Marx, o trabalho ocupa posição central na vida social, pois é por meio dele que os seres humanos transformam a natureza e produzem os bens necessários à sua existência. No capitalismo, entretanto, o trabalhador não possui os meios de produção e precisa vender sua força de trabalho.\n\nA partir dessa perspectiva, a relação entre trabalhador e sistema capitalista caracteriza-se principalmente pela",
+        options: [
+            "A) ausência de conflitos entre trabalhadores e proprietários.",
+            "B) igualdade econômica entre as classes sociais.",
+            "C) existência de relações sociais determinadas pela produção e pela propriedade dos meios de produção.",
+            "D) eliminação da divisão social do trabalho.",
+            "E) substituição do trabalho humano pela atividade política."
+        ],
+        answer: 2,
+        explanation: "Para Marx, a forma como uma sociedade produz seus bens influencia profundamente suas relações sociais. No capitalismo, existe uma divisão entre quem possui os meios de produção e quem precisa vender sua força de trabalho.\nBurguesia → proprietária dos meios de produção.\nProletariado → vende sua força de trabalho."
+    },
+    {
+        title: "2. Karl Marx — classes sociais",
+        text: "Na sociedade capitalista, segundo Marx, existem grupos sociais que ocupam posições diferentes no processo produtivo. De um lado estão aqueles que possuem os meios de produção; de outro, aqueles que precisam vender sua força de trabalho para sobreviver.\n\nEssa divisão está relacionada ao conceito de",
+        options: [
+            "A) solidariedade mecânica.",
+            "B) luta de classes.",
+            "C) ação social.",
+            "D) anomia.",
+            "E) racionalização."
+        ],
+        answer: 1,
+        explanation: "Marx entende a história das sociedades como marcada por conflitos entre classes com interesses diferentes. No capitalismo, o principal conflito ocorre entre burguesia e proletariado.",
+        macete: "Marx → classes → conflito → luta de classes."
+    },
+    {
+        title: "3. Max Weber — capitalismo",
+        text: "Max Weber analisou a formação do capitalismo moderno relacionando-a também a determinadas transformações culturais e religiosas. Em sua análise da ética protestante, determinados comportamentos passaram a valorizar a disciplina, o trabalho sistemático e a utilização racional dos recursos.\n\nA interpretação de Weber destaca a relação entre",
+        options: [
+            "A) religião, conduta econômica e desenvolvimento do capitalismo moderno.",
+            "B) religião e desaparecimento da propriedade privada.",
+            "C) trabalho e eliminação das diferenças sociais.",
+            "D) Estado e fim das atividades econômicas privadas.",
+            "E) industrialização e desaparecimento das crenças religiosas."
+        ],
+        answer: 0,
+        explanation: "Weber estudou como determinados valores religiosos, especialmente associados ao protestantismo ascético, contribuíram para uma conduta valorizada pelo capitalismo moderno: disciplina, trabalho sistemático, poupança e racionalização.\n⚠️ Cuidado: Weber não disse simplesmente que o protestantismo criou o capitalismo. Ele analisou uma relação entre determinados valores religiosos e o desenvolvimento do espírito capitalista.",
+        macete: "Weber → ética protestante → trabalho disciplinado → capitalismo."
+    },
+    {
+        title: "4. Émile Durkheim — divisão do trabalho",
+        text: "Com o desenvolvimento das sociedades industriais, as pessoas passaram a desempenhar funções cada vez mais especializadas. Para Durkheim, essa diferenciação das funções contribuiu para uma nova forma de integração social.\n\nEssa forma de solidariedade é denominada",
+        options: [
+            "A) solidariedade tradicional.",
+            "B) solidariedade econômica.",
+            "C) solidariedade mecânica.",
+            "D) solidariedade orgânica.",
+            "E) solidariedade individualista."
+        ],
+        answer: 3,
+        explanation: "Nas sociedades modernas, existe uma grande divisão social do trabalho. As pessoas possuem funções diferentes, mas dependem umas das outras (médico → agricultor → motorista...). Essa interdependência produz a solidariedade orgânica.",
+        macete: "Sociedade simples → solidariedade mecânica | Sociedade complexa → solidariedade orgânica"
+    },
+    {
+        title: "5. Durkheim — solidariedade",
+        text: "Em sociedades menos complexas, segundo Durkheim, a integração social está fortemente relacionada à existência de valores, crenças e costumes compartilhados por grande parte dos indivíduos.\n\nEssa característica corresponde à",
+        options: [
+            "A) solidariedade orgânica.",
+            "B) solidariedade mecânica.",
+            "C) divisão técnica do trabalho.",
+            "D) racionalização econômica.",
+            "E) luta de classes."
+        ],
+        answer: 1,
+        explanation: "A solidariedade mecânica caracteriza sociedades nas quais existe maior semelhança entre os indivíduos e forte compartilhamento de valores, crenças e costumes. Já na sociedade moderna, a especialização das funções produz a solidariedade orgânica."
+    },
+    {
+        title: "6. Taylorismo",
+        text: "Uma fábrica decidiu dividir o processo produtivo em pequenas tarefas. Cada trabalhador passou a executar uma atividade específica, enquanto os gestores estudavam detalhadamente os movimentos necessários para reduzir o tempo de produção.\n\nA organização descrita está relacionada ao",
+        options: [
+            "A) socialismo utópico.",
+            "B) toyotismo.",
+            "C) taylorismo.",
+            "D) liberalismo econômico.",
+            "E) trabalho artesanal."
+        ],
+        answer: 2,
+        explanation: "Frederick Taylor desenvolveu métodos para aumentar a eficiência do trabalho por meio da racionalização e divisão das tarefas. O trabalhador realiza uma tarefa específica, buscando reduzir movimentos desnecessários e aumentar a produtividade.",
+        macete: "Taylor → tempo + movimentos + eficiência."
+    },
+    {
+        title: "7. Fordismo",
+        text: "Durante o século XX, determinadas indústrias passaram a utilizar linhas de montagem, padronização dos produtos e produção em grande escala.\n\nUma consequência desse modelo produtivo foi",
+        options: [
+            "A) redução da especialização dos trabalhadores.",
+            "B) produção artesanal individualizada.",
+            "C) aumento da produção em massa e da padronização.",
+            "D) eliminação da divisão técnica do trabalho.",
+            "E) abandono da utilização de máquinas."
+        ],
+        answer: 2,
+        explanation: "O Fordismo ficou conhecido pela utilização da linha de montagem, permitindo produzir grandes quantidades de produtos padronizados.\nTaylorismo: organização científica do trabalho.\nFordismo: aplica princípios de racionalização à produção em massa, especialmente por meio da linha de montagem.",
+        macete: "Ford → fábrica → esteira → produção em massa."
+    },
+    {
+        title: "8. Toyotismo",
+        text: "Uma empresa passou a organizar sua produção de acordo com a demanda do mercado, reduzindo estoques e exigindo maior flexibilidade dos trabalhadores.\n\nEssa forma de organização produtiva está relacionada ao",
+        options: [
+            "A) fordismo.",
+            "B) artesanato medieval.",
+            "C) toyotismo.",
+            "D) mercantilismo.",
+            "E) socialismo utópico."
+        ],
+        answer: 2,
+        explanation: "O Toyotismo surgiu como uma forma mais flexível de organização da produção. Características importantes: produção conforme a demanda, redução de estoques, flexibilidade, trabalhador polivalente e busca por redução de desperdícios.",
+        macete: "Toyotismo → flexibilidade + demanda + estoque reduzido."
+    },
+    {
+        title: "9. Reestruturação produtiva",
+        text: "A partir das últimas décadas do século XX, diversas empresas modificaram suas formas de produção. A busca por maior flexibilidade, redução de custos e adaptação rápida às mudanças do mercado tornou-se uma característica importante.\n\nEsse processo está relacionado à",
+        options: [
+            "A) reestruturação produtiva.",
+            "B) eliminação da tecnologia.",
+            "C) volta ao trabalho artesanal.",
+            "D) diminuição da competição entre empresas.",
+            "E) extinção do trabalho assalariado."
+        ],
+        answer: 0,
+        explanation: "A reestruturação produtiva corresponde às mudanças realizadas pelas empresas para se adaptar às novas condições econômicas e tecnológicas, incluindo automação, flexibilização, terceirização e novas formas de gestão."
+    },
+    {
+        title: "10. Tecnologia e trabalho",
+        text: "A introdução de novas tecnologias pode aumentar a produtividade de uma empresa. Entretanto, também pode modificar as ocupações existentes, fazendo algumas funções desaparecerem ou exigindo novas qualificações profissionais.\n\nUma consequência possível desse processo é o",
+        options: [
+            "A) desaparecimento completo das desigualdades sociais.",
+            "B) desemprego estrutural.",
+            "C) fim da divisão social do trabalho.",
+            "D) retorno generalizado ao trabalho artesanal.",
+            "E) desaparecimento da necessidade de qualificação."
+        ],
+        answer: 1,
+        explanation: "Quando novas tecnologias substituem determinadas funções, algumas ocupações podem desaparecer ou diminuir. Isso pode gerar desemprego estrutural, relacionado a mudanças na própria estrutura do mercado de trabalho."
+    },
+    {
+        title: "11. Ricardo Antunes",
+        text: "As transformações recentes do capitalismo modificaram as formas de contratação e organização do trabalho. Trabalhadores podem enfrentar contratos temporários, terceirização, informalidade, flexibilização e novas formas de controle.\n\nA análise da chamada nova morfologia do trabalho está relacionada principalmente à",
+        options: [
+            "A) permanência das mesmas formas de trabalho existentes no século XIX.",
+            "B) eliminação da exploração do trabalhador pela tecnologia.",
+            "C) transformação e diversificação das formas de trabalho no capitalismo contemporâneo.",
+            "D) substituição completa do trabalho humano por máquinas.",
+            "E) extinção das relações entre trabalho e capitalismo."
+        ],
+        answer: 2,
+        explanation: "Ricardo Antunes analisa as transformações do trabalho no capitalismo contemporâneo. A 'nova morfologia do trabalho' envolve terceirização, informalidade, trabalho temporário, flexibilização e precarização.",
+        macete: "Antunes → novas formas de trabalho + precarização + flexibilização."
+    },
+    {
+        title: "12. Empreendedorismo",
+        text: "No capitalismo contemporâneo, discursos sobre empreendedorismo frequentemente apresentam o indivíduo como responsável por criar suas próprias oportunidades de trabalho e alcançar sucesso econômico.\n\nUma crítica sociológica a essa perspectiva pode destacar que ela",
+        options: [
+            "A) elimina completamente a influência das condições econômicas sobre os indivíduos.",
+            "B) pode responsabilizar individualmente o trabalhador por problemas relacionados à estrutura do mercado de trabalho.",
+            "C) impede qualquer forma de iniciativa individual.",
+            "D) determina o fim da propriedade privada.",
+            "E) elimina a desigualdade econômica."
+        ],
+        answer: 1,
+        explanation: "O mito do empreendedorismo pode apresentar o sucesso ou fracasso profissional como responsabilidade exclusivamente individual. A Sociologia chama a atenção para fatores estruturais como condições econômicas, desigualdade e acesso a oportunidades."
+    },
+    {
+        title: "13. Liberalismo",
+        text: "O liberalismo surgiu historicamente em oposição a formas de poder político concentrado e defendeu princípios relacionados à liberdade individual e à limitação do poder estatal.\n\nEntre suas características está a defesa da",
+        options: [
+            "A) liberdade individual e da propriedade privada.",
+            "B) eliminação da propriedade privada.",
+            "C) centralização absoluta do poder político.",
+            "D) abolição da iniciativa privada.",
+            "E) igualdade obrigatória de resultados econômicos."
+        ],
+        answer: 0,
+        explanation: "O liberalismo valoriza princípios como liberdade individual, propriedade privada, livre iniciativa, igualdade perante a lei e limitação do poder estatal.",
+        macete: "Liberalismo → liberdade + propriedade privada + mercado."
+    },
+    {
+        title: "14. John Locke",
+        text: "John Locke defendeu a existência de direitos naturais dos indivíduos e argumentou que o poder político deveria possuir limites.\n\nEntre os direitos associados ao pensamento de Locke está",
+        options: [
+            "A) propriedade.",
+            "B) privilégio de nascimento.",
+            "C) censura religiosa.",
+            "D) servidão obrigatória.",
+            "E) controle estatal absoluto."
+        ],
+        answer: 0,
+        explanation: "John Locke é um dos principais pensadores do liberalismo político. Ele defendia os direitos naturais: vida, liberdade e propriedade.",
+        macete: "Locke → vida + liberdade + propriedade."
+    },
+    {
+        title: "15. Adam Smith",
+        text: "O pensamento econômico associado a Adam Smith valoriza mecanismos de mercado e a liberdade de iniciativa econômica.\n\nNesse contexto, uma característica do liberalismo econômico é a defesa da",
+        options: [
+            "A) livre iniciativa e concorrência.",
+            "B) eliminação dos mercados.",
+            "C) propriedade estatal de todas as empresas.",
+            "D) proibição da atividade empresarial.",
+            "E) planificação integral da economia pelo Estado."
+        ],
+        answer: 0,
+        explanation: "Adam Smith é o pai do liberalismo econômico. Defendia a importância da liberdade econômica e da concorrência, contrapondo-se ao controlo estatal absoluto.",
+        macete: "Adam Smith → liberalismo econômico → livre iniciativa + concorrência."
+    },
+    {
+        title: "16. Socialismo",
+        text: "O socialismo surgiu, entre outros fatores históricos, como uma resposta às desigualdades associadas ao desenvolvimento do capitalismo industrial.\n\nUma característica presente em diversas correntes socialistas é a defesa de",
+        options: [
+            "A) aumento da concentração da riqueza.",
+            "B) fortalecimento irrestrito da propriedade privada dos meios de produção.",
+            "C) maior igualdade social e econômica.",
+            "D) eliminação da cooperação entre trabalhadores.",
+            "E) redução da participação coletiva na economia."
+        ],
+        answer: 2,
+        explanation: "O socialismo visa combater as desigualdades do capitalismo industrial, defendendo maior igualdade socioeconómica, organização coletiva da economia e críticas à concentração de propriedade dos meios de produção."
+    },
+    {
+        title: "17. Marx e socialismo",
+        text: "Para Marx e Engels, a sociedade capitalista apresenta conflitos relacionados às diferentes posições ocupadas pelas classes no processo produtivo.\n\nA transformação defendida pelo pensamento socialista marxista está relacionada à",
+        options: [
+            "A) manutenção permanente da divisão entre burguesia e proletariado.",
+            "B) superação das relações sociais baseadas na exploração de classe.",
+            "C) expansão ilimitada da propriedade privada dos meios de produção.",
+            "D) eliminação da produção coletiva.",
+            "E) valorização exclusiva da competição individual."
+        ],
+        answer: 1,
+        explanation: "A transformação socialista na perspetiva marxista procura superar a exploração de classe e a divisão entre proprietários dos meios de produção e trabalhadores assalariados.",
+        macete: "Marx → capitalismo → classes → exploração → transformação social."
+    },
+    {
+        title: "18. Liberalismo × Socialismo",
+        text: "Liberalismo e socialismo desenvolveram diferentes respostas aos problemas econômicos e sociais produzidos pela modernidade.\n\nUma diferença fundamental entre essas correntes está relacionada à",
+        options: [
+            "A) compreensão da propriedade e da organização econômica da sociedade.",
+            "B) rejeição de qualquer forma de atividade econômica.",
+            "C) defesa conjunta da mesma forma de organização dos meios de produção.",
+            "D) inexistência de preocupações com questões sociais.",
+            "E) rejeição conjunta da industrialização."
+        ],
+        answer: 0,
+        explanation: "A grande divergência reside na propriedade dos meios de produção: o Liberalismo valoriza a propriedade privada e o mercado livre, enquanto o Socialismo enfatiza formas coletivas/sociais de organização."
+    },
+    {
+        title: "19. Desigualdade econômica",
+        text: "Uma sociedade pode reconhecer formalmente que todos os indivíduos possuem os mesmos direitos perante a lei e, ainda assim, apresentar grandes diferenças de renda, patrimônio e acesso a oportunidades.\n\nEssa situação demonstra que",
+        options: [
+            "A) igualdade jurídica necessariamente produz igualdade econômica.",
+            "B) liberdade individual elimina automaticamente desigualdades sociais.",
+            "C) igualdade perante a lei não significa necessariamente igualdade econômica.",
+            "D) propriedade privada impede qualquer desigualdade.",
+            "E) desigualdade econômica só existe em sociedades não industrializadas."
+        ],
+        answer: 2,
+        explanation: "A igualdade formal (perante a lei) não garante igualdade material (de rendimento, acesso e património). Esta é uma das principais críticas sociológicas dirigidas ao modelo liberal clássico."
+    },
+    {
+        title: "20. Questão integradora — trabalho",
+        text: "Considere as seguintes transformações:\n- divisão científica das tarefas;\n- produção em massa;\n- linha de montagem;\n- produção flexível;\n- adaptação da produção à demanda;\n- utilização crescente de tecnologias digitais.\n\nEssas transformações demonstram que",
+        options: [
+            "A) as formas de organização do trabalho permanecem iguais ao longo da história.",
+            "B) o desenvolvimento tecnológico não interfere nas relações de trabalho.",
+            "C) o trabalho e sua organização se transformam conforme as mudanças econômicas e tecnológicas.",
+            "D) a industrialização eliminou definitivamente os conflitos entre trabalhadores e empresas.",
+            "E) a tecnologia tornou desnecessária qualquer forma de organização produtiva."
+        ],
+        answer: 2,
+        explanation: "As formas de trabalho evoluem historicamente: Taylorismo (divisão/eficiência) → Fordismo (massa/esteira) → Toyotismo (flexível/demanda) → Contemporâneo (tecnologia/precarização)."
+    }
+];
+
+let score = 0;
+let answeredCount = 0;
+
+// Gestão de Tema (Claro / Escuro)
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeButtonText(savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeButtonText(newTheme);
+}
+
+function updateThemeButtonText(theme) {
+    const btn = document.getElementById('theme-toggle');
+    if (theme === 'dark') {
+        btn.innerHTML = '☀️ Modo Claro';
+    } else {
+        btn.innerHTML = '🌙 Modo Escuro';
+    }
+}
+
+function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+
+    quizData.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-${index}`;
+
+        let optionsHTML = '';
+        q.options.forEach((opt, optIndex) => {
+            optionsHTML += `
+                <button class="option-btn" onclick="checkAnswer(${index}, ${optIndex})">
+                    ${opt}
+                </button>
+            `;
+        });
+
+        let maceteHTML = q.macete ? `<div class="feedback-macete">💡 <strong>Macete:</strong> ${q.macete}</div>` : '';
+
+        card.innerHTML = `
+            <div class="question-title">${q.title}</div>
+            <div class="question-text">${q.text}</div>
+            <div class="options" id="options-${index}">
+                ${optionsHTML}
+            </div>
+            <div class="feedback" id="feedback-${index}">
+                <div class="feedback-explanation">
+                    <strong>Comentário:</strong><br>${q.explanation}
+                </div>
+                ${maceteHTML}
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function checkAnswer(questionIndex, selectedOption) {
+    const q = quizData[questionIndex];
+    const optionsContainer = document.getElementById(`options-${questionIndex}`);
+    const buttons = optionsContainer.getElementsByTagName('button');
+    const feedbackEl = document.getElementById(`feedback-${questionIndex}`);
+
+    for (let btn of buttons) {
+        btn.disabled = true;
+    }
+
+    if (selectedOption === q.answer) {
+        buttons[selectedOption].classList.add('correct');
+        score++;
+    } else {
+        buttons[selectedOption].classList.add('wrong');
+        buttons[q.answer].classList.add('correct');
+    }
+
+    feedbackEl.classList.add('show');
+
+    answeredCount++;
+    const progressPercent = (answeredCount / quizData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+    if (answeredCount === quizData.length) {
+        setTimeout(showResults, 800);
+    }
+}
+
+function showResults() {
+    document.getElementById('quiz-container').style.display = 'none';
+    const resultsCard = document.getElementById('results-card');
+    resultsCard.style.display = 'block';
+
+    document.getElementById('score-display').innerText = `${score} / ${quizData.length}`;
+
+    const percentage = (score / quizData.length) * 100;
+    const messageEl = document.getElementById('score-message');
+
+    if (percentage >= 80) {
+        messageEl.innerText = "Excelente! Estás muito bem preparado para a prova.";
+        messageEl.style.color = "var(--correct-border)";
+    } else if (percentage >= 50) {
+        messageEl.innerText = "Bom trabalho! Revisa os comentários e macetes das questões que erraste.";
+        messageEl.style.color = "var(--primary)";
+    } else {
+        messageEl.innerText = "Precisas de rever a matéria. Lê atentamente os comentários para fixar os conceitos.";
+        messageEl.style.color = "var(--wrong-border)";
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    score = 0;
+    answeredCount = 0;
+    document.getElementById('progress-bar').style.width = '0%';
+    document.getElementById('results-card').style.display = 'none';
+    document.getElementById('quiz-container').style.display = 'block';
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Inicializar Tema e Quiz
+initTheme();
+renderQuiz();
+</script>
+
+</body>
+</html>
